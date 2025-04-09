@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposal Deadline Countdown</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* General Body Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 2.5rem;
+            color: #333;
+        }
+
+        /* Centering the <h4> element */
+        h4 {
+            text-align: center;
+            margin-top: 20px; /* Adjusts the distance from the top of the page */
+            font-size: 1.5rem; /* Adjust font size if needed */
+            color: blue; /* Makes the text blue */
+        }
+
+        /* Filter Section */
+        .filter-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .filter-section label {
+            font-size: 1.1rem;
+            margin-right: 10px;
+            color: #555;
+        }
+
+        .filter-section select {
+            font-size: 1rem;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        /* Proposal Cards */
+        .proposal-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 50px;
+        }
+
+        .proposal {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: #333;
+        }
+
+        .proposal:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .proposal h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #333;
+            margin-top: 0;
+        }
+
+        .proposal .deadline {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-top: 10px;
+        }
+
+        .proposal .categories {
+            font-size: 1rem;
+            margin-top: 15px;
+            color: #777;
+        }
+
+        /* Color adjustments for Past Proposals */
+        .proposal .past {
+            color: #ff6347; /* Soft red color for past proposals */
+            font-weight: bold;
+        }
+
+        /* Past Message */
+        .past-message {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            color: #ffa07a; /* Lighter color for reminder text */
+        }
+
+        /* Separation Line */
+        .separation {
+            grid-column: span 2;
+            height: 2px;
+            background-color: #ddd;
+            margin-top: 30px;
+        }
+
+        .proposal a {
+            text-decoration: none;
+            color: #1e90ff;
+            font-weight: 500;
+        }
+
+        /* Countdown Digits Styling */
+        .countdown {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            gap: 10px;
+        }
+
+        .countdown span {
+            background-color: #e9ecef;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-size: 1.5rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .proposal-list {
+                margin: 30px 20px;
+            }
+
+            .proposal {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Proposal Deadline Countdown</h1>
+
+    <h4>Submit the proposal to the research office early!</h4>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <label for="category-filter">Filter by Category:</label>
+        <select id="category-filter">
+            <option value="">All</option>
+            <option value="NSF">NSF</option>
+            <option value="Industry">Industry</option>
+            <option value="OU">OU</option>
+        </select>
+    </div>
+
+    <div class="proposal-list" id="proposal-list"></div>
+
+    <script>
+        const proposals = [
+            { name: 'Amazon - Build on Trainium', link: 'https://www.amazon.science/research-awards/call-for-proposals/build-on-trainium-call-for-proposals-spring-2025', deadline: '2025-04-30T23:59:59Z', categories: ['Industry'] },
+            { name: 'Amazon - All', link: 'https://www.amazon.science/research-awards/call-for-proposals', deadline: '2025-04-30T23:59:59Z', categories: ['Industry'] },
+            { name: 'Amazon - AWS AI Agentic AI', link: 'https://www.amazon.science/research-awards/call-for-proposals/aws-ai-agentic-ai-call-for-proposals-spring-2025', deadline: '2025-04-30T23:59:59Z', categories: ['Industry'] },
+            { name: 'Google Research Scholar Program (Incoming)', link: 'https://research.google/programs-and-events/research-scholar-program/', deadline: '2024-04-30T23:59:59Z', categories: ['Industry']},
+            { name: 'Google Academic Research Awards (Incoming)', link: 'https://research.google/programs-and-events/google-academic-research-awards/', deadline: '2024-04-30T23:59:59Z', categories: ['Industry']},
+            { name: 'NVIDIA - All', link: 'https://www.nvidia.com/en-us/industries/higher-education-research/academic-grant-program/', deadline: '2025-06-30T23:59:59Z', categories: ['Industry'] },
+            { name: 'NVIDIA - Generative AI Training and Model Development', link: 'https://nvdam.widen.net/s/hpqvt9ptd6/her-copy-and-design-grant-program-cfps-gen-ai-and-llm-3370121-r2', deadline: '2025-06-30T23:59:59Z', categories: ['Industry'] },
+            { name: 'NVIDIA - Generative AI Alignment and Inference', link: 'https://nvdam.widen.net/s/xnbkh6bcpt/her-grant-program-cfps-gen-ai-alignment-and-inference', deadline: '2025-06-30T23:59:59Z', categories: ['Industry'] },
+            { name: 'NSF CRII', link: 'https://www.nsf.gov/funding/opportunities/crii-computer-information-science-engineering-research-initiation', deadline: '2025-09-17T23:59:59Z', categories: ['NSF'] },
+            { name: 'NSF CAREER', link: 'https://www.nsf.gov/funding/opportunities/career-faculty-early-career-development-program', deadline: '2025-07-23T23:59:59Z', categories: ['NSF'] },
+            { name: 'URC Faculty Funding', link: 'https://ern.oakland.edu/research/funding/URC-Faculty-Funding/index.html', deadline: '2025-10-20T23:59:59Z', categories: ['OU'] },
+        ];
+
+        document.getElementById('category-filter').addEventListener('change', updateCountdown);
+
+        function updateCountdown() {
+            const selectedCategory = document.getElementById('category-filter').value;
+            const now = new Date();
+            const proposalList = document.getElementById('proposal-list');
+            proposalList.innerHTML = ''; // Clear the current list
+
+            // Separate proposals into open and closed, then separate them into upcoming and past
+            const upcomingProposals = [];
+            const pastProposals = [];
+
+            proposals.forEach(proposal => {
+                let deadline;
+                if (proposal.deadline === 'NA' || !proposal.deadline) {
+                    deadline = null; // Skip countdown if deadline is NA or null
+                } else {
+                    deadline = new Date(proposal.deadline); // Convert valid date strings into Date objects
+                    if (isNaN(deadline.getTime())) {
+                        deadline = null; // Handle invalid date format
+                    }
+                }
+
+                if (deadline) {
+                    const timeRemaining = deadline - now;
+                    const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                    const pastDays = Math.floor(-timeRemaining / (1000 * 60 * 60 * 24));
+
+                    if (timeRemaining > 0) {
+                        upcomingProposals.push({ ...proposal, remainingDays: daysRemaining });
+                    } else {
+                        pastProposals.push({ ...proposal, pastDays });
+                    }
+                } else {
+                    // Handle incoming proposals (with NA deadlines)
+                    const proposalElement = document.createElement('div');
+                    proposalElement.className = 'proposal';
+                    proposalElement.innerHTML = `<h2><a href="${proposal.link}" target="_blank">${proposal.name} - Incoming</a></h2>
+                        <p class="past">This proposal is incoming</p>
+                        <p class="categories">Categories: ${proposal.categories.join(', ')}</p>`;
+                    proposalList.appendChild(proposalElement);
+                }
+            });
+
+            // Filter by category
+            const filteredUpcomingProposals = upcomingProposals.filter(proposal => 
+                selectedCategory === '' || proposal.categories.includes(selectedCategory)
+            );
+            const filteredPastProposals = pastProposals.filter(proposal => 
+                selectedCategory === '' || proposal.categories.includes(selectedCategory)
+            );
+
+            // Sort upcoming proposals by remaining days in ascending order
+            filteredUpcomingProposals.sort((a, b) => a.remainingDays - b.remainingDays);
+
+            // Sort past proposals by past days in ascending order
+            filteredPastProposals.sort((a, b) => a.pastDays - b.pastDays);
+
+            // Display upcoming proposals
+            filteredUpcomingProposals.forEach(proposal => {
+                const proposalElement = document.createElement('div');
+                proposalElement.className = 'proposal';
+
+                const countdownContainer = document.createElement('div');
+                countdownContainer.className = 'countdown';
+                
+                updateCountdownRealTime(proposalElement, proposal, countdownContainer);
+
+                proposalElement.innerHTML = `<h2><a href="${proposal.link}" target="_blank">${proposal.name}</a></h2>
+                    <p class="categories">Categories: ${proposal.categories.join(', ')}</p>`;
+
+                proposalElement.appendChild(countdownContainer);
+                proposalList.appendChild(proposalElement);
+            });
+
+            // Reminder for co-located workshops before displaying past proposals
+            if (filteredPastProposals.length > 0) {
+                const pastMessage = document.createElement('div');
+                pastMessage.className = 'past-message';
+                pastMessage.innerText = 'Please check past proposals regularly. It may open this year!';
+                proposalList.appendChild(pastMessage);
+            }
+
+            // Display past proposals
+            filteredPastProposals.forEach(proposal => {
+                const proposalElement = document.createElement('div');
+                proposalElement.className = 'proposal';
+                proposalElement.innerHTML = `<h2><a href="${proposal.link}" target="_blank">${proposal.name}</a></h2>
+                    <p class="past">Past proposal - ${proposal.pastDays} days ago</p>
+                    <p class="categories">Categories: ${proposal.categories.join(', ')}</p>`;
+                proposalList.appendChild(proposalElement);
+            });
+        }
+
+        function updateCountdownRealTime(proposalElement, proposal, countdownContainer) {
+            const deadline = new Date(proposal.deadline);
+
+            function update() {
+                const now = new Date(); // Local time for the user
+                const timeRemaining = deadline - now;
+
+                if (timeRemaining < 0) {
+                    countdownContainer.innerHTML = 'Deadline Passed';
+                    return;
+                }
+
+                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((timeRemaining / 1000 / 60) % 60);
+                const seconds = Math.floor((timeRemaining / 1000) % 60);
+
+                const countdownText = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                countdownContainer.innerHTML = countdownText;
+            }
+
+            update();  // Initial update immediately
+            setInterval(update, 1000); // Update every second
+        }
+
+        // Initial countdown update
+        updateCountdown();
+    </script>
+</body>
+</html>
